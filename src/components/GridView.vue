@@ -3,18 +3,21 @@
     <div class="grid__row" v-for="row in grid.cellMatrix">
       <GridCell v-for="cell in row" :cell="cell" :key="cell.id" />
     </div>
+    <game-over-overlay v-if="gameOver" :grid="grid" @restart="restart" />
   </div>
 </template>
 
 <script>
-import GridCell from "./GridCell.vue";
 import Grid from "../utilities/grid";
+import GridCell from "./GridCell.vue";
+import GameOverOverlay from "./GameOverOverlay.vue";
 
 export default {
   name: "GridView",
 
   components: {
-    GridCell
+    GridCell,
+    GameOverOverlay
   },
 
   data() {
@@ -29,9 +32,15 @@ export default {
     window.addEventListener("keydown", this.handleKeyDown.bind(this));
   },
 
+  computed: {
+    gameOver() {
+      return this.grid.hasWon || this.grid.hasLost;
+    }
+  },
+
   methods: {
     handleKeyDown(event) {
-      if (this.grid.gameOver()) {
+      if (this.grid.hasWon) {
         return;
       }
 
@@ -40,6 +49,10 @@ export default {
         var direction = event.keyCode - 37;
         this.grid.slide(direction);
       }
+    },
+    restart() {
+      this.grid = new Grid(6, 6);
+      this.grid.initRandomCell(2);
     }
   }
 };
@@ -64,12 +77,12 @@ a {
 
 .grid {
   background-color: #44505d;
-  padding: 0.75rem;
+  padding: 5px;
   border-radius: 0.3rem;
+  position: relative;
 
   &__row {
     display: flex;
-    margin-bottom: 0.75rem;
 
     &:last-child {
       margin-bottom: 0;
