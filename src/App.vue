@@ -1,6 +1,5 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png" />
     <div class="grid-container">
       <GridView />
     </div>
@@ -19,6 +18,10 @@ export default {
 </script>
 
 <style lang="scss">
+body {
+  background-color: #f5f5f5;
+}
+
 #app {
   font-family: "Avenir", Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
