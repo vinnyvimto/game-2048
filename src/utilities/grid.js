@@ -1,24 +1,28 @@
-// import _ from 'lodash';
 import Cell from "./cell";
 
 export default class Grid {
-  constructor(rowLength, colLength) {
+  constructor(rowLength, colLength, state = []) {
     this.rowLength = rowLength;
     this.colLength = colLength;
     this.cellMatrix = [];
     this.hasWon = false;
     this.hasLost = false;
     this.score = 0;
+    this.latestCell = null;
 
-    this.initGrid();
+    this.init(state);
   }
 
-  initGrid() {
-    for (let i = 0; i < this.rowLength; ++i) {
+  init(state = []) {
+    this.cellMatrix = [];
+    // TODO: need to load in value data without clearing cells
+    for (let row = 0; row < this.rowLength; ++row) {
       this.cellMatrix.push([]);
 
-      for (let j = 0; j < this.colLength; ++j) {
-        this.cellMatrix[i][j] = new Cell(i, j, 0);
+      for (let col = 0; col < this.colLength; ++col) {
+        const value = state.length ? state[row][col] : 0;
+
+        this.cellMatrix[row][col] = new Cell(row, col, value);
       }
     }
   }
@@ -42,6 +46,7 @@ export default class Grid {
     luckyCell.value = value;
     luckyCell.oldRow = -1;
     luckyCell.oldColumn = -1;
+    this.latestCell = luckyCell;
   }
 
   getEmptyCells() {
@@ -56,9 +61,8 @@ export default class Grid {
     return emptyCells;
   }
 
-  slide(direction) {
-    // 0 -> left, 1 -> up, 2 -> right, 3 -> down
-    // this.clearOldTiles();
+  slide(direction, newValue = true) {
+    // left: 0, up: 1, right: 2, down: 3
     for (let i = 0; i < direction; ++i) {
       this.cellMatrix = this.rotateLeft(this.cellMatrix);
     }
@@ -68,10 +72,11 @@ export default class Grid {
     }
     this.syncPositions();
 
-    if (wasMoved && !this.hasWon) {
+    if (newValue && wasMoved && !this.hasWon) {
       this.initRandomCell(1);
     }
 
+    // TODO: Could just check if we can place a new cell?
     this.checkHasLost();
   }
 
@@ -163,30 +168,49 @@ export default class Grid {
   }
 
   canMoveUp(cell) {
-    const cellAbove = cell.row > 0 ? this.cellMatrix[cell.row - 1][cell.column] : false;
-    return cellAbove && (cellAbove.value === 0 || cellAbove.value === cell.value);
+    const cellAbove =
+      cell.row > 0 ? this.cellMatrix[cell.row - 1][cell.column] : false;
+    return (
+      cellAbove && (cellAbove.value === 0 || cellAbove.value === cell.value)
+    );
   }
 
   canMoveDown(cell) {
-    const cellBelow = cell.row < this.rowLength - 1 ? this.cellMatrix[cell.row + 1][cell.column] : false;
-    return cellBelow && (cellBelow.value === 0 || cellBelow.value === cell.value);
+    const cellBelow =
+      cell.row < this.rowLength - 1
+        ? this.cellMatrix[cell.row + 1][cell.column]
+        : false;
+    return (
+      cellBelow && (cellBelow.value === 0 || cellBelow.value === cell.value)
+    );
   }
 
   canMoveLeft(cell) {
-    const cellLeft = cell.column > 0 ? this.cellMatrix[cell.row][cell.column - 1] : false;
+    const cellLeft =
+      cell.column > 0 ? this.cellMatrix[cell.row][cell.column - 1] : false;
     return cellLeft && (cellLeft.value === 0 || cellLeft.value === cell.value);
   }
 
   canMoveRight(cell) {
-    const cellRight = cell.column < this.colLength - 1 ? this.cellMatrix[cell.row][cell.column + 1] : false;
-    return cellRight && (cellRight.value === 0 || cellRight.value === cell.value);
+    const cellRight =
+      cell.column < this.colLength - 1
+        ? this.cellMatrix[cell.row][cell.column + 1]
+        : false;
+    return (
+      cellRight && (cellRight.value === 0 || cellRight.value === cell.value)
+    );
   }
 
   canMove() {
     return this.cellMatrix.some(row => {
       const rowFullCells = row.filter(cell => !cell.isEmpty());
       return rowFullCells.some(fullCell => {
-        return this.canMoveUp(fullCell) || this.canMoveDown(fullCell) || this.canMoveLeft(fullCell) || this.canMoveRight(fullCell);
+        return (
+          this.canMoveUp(fullCell) ||
+          this.canMoveDown(fullCell) ||
+          this.canMoveLeft(fullCell) ||
+          this.canMoveRight(fullCell)
+        );
       });
     });
   }

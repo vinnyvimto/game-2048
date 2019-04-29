@@ -2,11 +2,11 @@ FROM node:11.13-alpine AS build
 
 LABEL maintainer="Luke Vincent <luke.k.vincent@gmail.com>"
 
-WORKDIR /var/www/html
+WORKDIR /opt/game-2048
 
 RUN apk add --no-cache git
 
-COPY package*.json /var/www/html/
+COPY package*.json /opt/game-2048/
 
 RUN npm ci
 
@@ -17,7 +17,7 @@ RUN npm run build
 FROM nginx:1.14-alpine
 
 # Copy the built bundle from previous layer
-COPY --from=build /var/www/html/build /var/www/html/build/
+COPY --from=build /opt/game-2048/dist /var/www/html/
 
 # Copy the nginx configuration file
 COPY ./nginx.conf /etc/nginx/conf.d/default.conf

@@ -16,39 +16,11 @@ export default class Cell {
     return !this.value;
   }
 
-  moveTo(row, column) {
-    this.oldRow = this.row;
-    this.oldColumn = this.column;
-    this.row = row;
-    this.column = column;
+  getCoordinates() {
+    return [this.row, this.column];
   }
 
   isNew() {
     return this.oldRow == -1 && !this.mergedWith;
-  }
-
-  hasMoved() {
-    return (
-      (this.fromRow() != -1 &&
-        (this.fromRow() != this.toRow() ||
-          this.fromColumn() != this.toColumn())) ||
-      this.mergedWith
-    );
-  }
-
-  fromRow() {
-    return this.mergedWith ? this.row : this.oldRow;
-  }
-
-  fromColumn() {
-    return this.mergedWith ? this.column : this.oldColumn;
-  }
-
-  toRow() {
-    return this.mergedWith ? this.mergedWith.row : this.row;
-  }
-
-  toColumn() {
-    return this.mergedWith ? this.mergedWith.column : this.column;
   }
 }

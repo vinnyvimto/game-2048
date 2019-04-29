@@ -60,7 +60,7 @@ export default {
   border-radius: 5px;
 }
 
-.overlay .message {
+.game-over .message {
   color: #666;
 }
 </style>
