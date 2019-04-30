@@ -23,6 +23,13 @@ export default {
         classes.push("cell--new");
       }
 
+      if (this.cell.hasMoved()) {
+        classes.push(`cell--row-from-${this.cell.oldRow}-to-${this.cell.row}`);
+        classes.push(
+          `cell--column-from-${this.cell.oldColumn}-to-${this.cell.column}`
+        );
+      }
+
       return classes;
     }
   }
@@ -39,6 +46,8 @@ export default {
 }
 
 .cell {
+  position: absolute;
+
   &--full {
     display: flex;
     justify-content: center;
@@ -134,6 +143,60 @@ export default {
     color: #fff;
     background-color: #ec2;
     font-size: 1.5em;
+  }
+}
+
+@for $fromRow from 0 through 5 {
+  @for $toRow from 0 through 5 {
+    $name: cell--row-from-#{$fromRow}-to-#{$toRow};
+
+    @if $fromRow == $toRow {
+      .#{$name} {
+        top: 110px * $toRow + 10px;
+      }
+    } @else {
+      .#{$name} {
+        animation-duration: 0.3s;
+        animation-name: $name;
+        animation-fill-mode: forwards;
+      }
+
+      @keyframes #{$name} {
+        from {
+          top: 110px * $fromRow + 10px;
+        }
+        to {
+          top: 110px * $toRow + 10px;
+        }
+      }
+    }
+  }
+}
+
+@for $fromColumn from 0 through 5 {
+  @for $toColumn from 0 through 5 {
+    $name: cell--column-from-#{$fromColumn}-to-#{$toColumn};
+
+    @if $fromColumn == $toColumn {
+      .#{$name} {
+        left: 110px * $toColumn + 10px;
+      }
+    } @else {
+      .#{$name} {
+        animation-duration: 0.3s;
+        animation-name: $name;
+        animation-fill-mode: forwards;
+      }
+
+      @keyframes #{$name} {
+        from {
+          left: 110px * $fromColumn + 10px;
+        }
+        to {
+          left: 110px * $toColumn + 10px;
+        }
+      }
+    }
   }
 }
 </style>

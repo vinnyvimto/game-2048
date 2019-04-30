@@ -21,6 +21,10 @@ export default class Cell {
   }
 
   isNew() {
-    return this.oldRow == -1 && !this.mergedWith;
+    return this.oldRow === -1;
+  }
+
+  hasMoved() {
+    return this.oldRow !== this.row || this.oldColumn !== this.column;
   }
 }

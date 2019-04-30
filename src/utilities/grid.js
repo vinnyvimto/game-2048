@@ -121,11 +121,11 @@ export default class Grid {
         const nextFullCell = rowFullCells[nextIndex];
 
         if (prevFullCell.value === nextFullCell.value) {
-          // remove two consecutive cells starting from the previous cells index and replace with the next fill cell
           nextFullCell.value += nextFullCell.value;
           this.score += nextFullCell.value;
           delete prevFullCell.mergedWith;
           nextFullCell.mergedWith = prevFullCell;
+          // remove two consecutive cells starting from the previous cells index and replace with the next full cell
           rowFullCells.splice(prevIndex, 2, nextFullCell);
 
           wasMoved = true;
