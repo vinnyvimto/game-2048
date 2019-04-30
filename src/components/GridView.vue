@@ -125,11 +125,16 @@ export default {
         grid.score = this.grid.score;
         grid.slide(direction);
 
+        // May not be set if won
+        const newValCoord = grid.latestCell
+          ? grid.latestCell.getCoordinates()
+          : null;
+
         const data = {
           direction: direction,
           newValMatrix: grid.getValueMatrix(),
           oldValMatrix: this.grid.getValueMatrix(),
-          newValCoord: grid.latestCell.getCoordinates(),
+          newValCoord: newValCoord,
           score: grid.score
         };
 
@@ -151,6 +156,12 @@ export default {
       grid.slide(state.direction, false);
       grid.score = state.score;
       this.grid = grid;
+
+      if (!state.newValCoord) {
+        // No new piece if won
+        return;
+      }
+
       const cell = this.grid.getCell(
         state.newValCoord[0],
         state.newValCoord[1]

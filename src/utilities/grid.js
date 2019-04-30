@@ -46,7 +46,7 @@ export default class Grid {
     luckyCell.value = value;
     luckyCell.oldRow = -1;
     luckyCell.oldColumn = -1;
-    this.latestCell = luckyCell;
+    this.latestCell = luckyCell || null;
   }
 
   getEmptyCells() {
