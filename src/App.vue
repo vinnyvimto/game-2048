@@ -29,31 +29,37 @@ body {
   text-align: center;
   color: #2c3e50;
   margin-top: 60px;
+}
 
-  .grid-view-container {
-    display: flex;
-    justify-content: center;
+.grid-view-container {
+  display: flex;
+  justify-content: center;
+}
+
+.btn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #44505d;
+  color: #fff;
+  font-size: 1.25em;
+  font-weight: 600;
+  border-radius: 0.3em;
+  padding: 0 20px;
+  height: 45px;
+  cursor: pointer;
+  outline: none;
+  border: 0;
+
+  &--small {
+    font-size: 90%;
+    padding: 0 10px;
+    height: 40px;
   }
+}
 
-  .btn {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: #44505d;
-    color: #fff;
-    font-size: 1.25em;
-    font-weight: 600;
-    border-radius: 0.3em;
-    padding: 0 20px;
-    height: 45px;
-    cursor: pointer;
-    outline: none;
-
-    &--small {
-      font-size: 90%;
-      padding: 0 10px;
-      height: 40px;
-    }
-  }
+input {
+  border-radius: 0.3em;
+  border: 1px solid #ddd;
 }
 </style>

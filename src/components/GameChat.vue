@@ -71,6 +71,16 @@ export default {
 .inline {
   display: flex;
   justify-content: center;
+
+  input {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+
+  .btn {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+  }
 }
 
 .chatbox {

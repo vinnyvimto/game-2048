@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="header">
-      <h1 class="title">2048++</h1>
+      <h1 class="title">2048+</h1>
     </div>
 
     <div class="grid-header">
@@ -59,7 +59,9 @@ export default {
       grid: new Grid(6, 6),
       movesocket: new WebsocketHandler(),
       chatsocket: new WebsocketHandler(),
-      messages: [{ id: "a", text: "Hello, welcome to 2048++" }]
+      messages: [
+        { id: "a", text: "Hello, welcome to 2048+, use the arrow keys to play" }
+      ]
     };
   },
 
@@ -88,8 +90,8 @@ export default {
       }
 
       this.isMultiplayer = true;
-      this.movesocket.subscribe("moves").listen(this.handleRemoteMove);
-      this.chatsocket.subscribe("chats").listen(this.handleRemoteMsg);
+      this.movesocket.subscribe("moves", this.handleRemoteMove);
+      this.chatsocket.subscribe("chats", this.handleRemoteMsg);
       this.getActiveGame();
     },
 
@@ -144,8 +146,7 @@ export default {
       }
     },
 
-    handleRemoteMove(event) {
-      const state = JSON.parse(event.data);
+    handleRemoteMove(state) {
       // Replay the move locally
       const grid = new Grid(
         this.grid.rowLength,
@@ -183,8 +184,7 @@ export default {
       this.chatsocket.broadcast(value);
     },
 
-    handleRemoteMsg(event) {
-      const text = JSON.parse(event.data);
+    handleRemoteMsg(text) {
       const id = Math.random()
         .toString(36)
         .substr(2, 5);

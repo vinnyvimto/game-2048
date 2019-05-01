@@ -1,30 +1,65 @@
 export default class Websocket {
-  constructor() {
-    this.handlers = [];
-  }
+  subscribe(channel, handler) {
+    let scheme = "ws";
 
-  subscribe(channel) {
-    this.socket = new WebSocket(`ws://localhost:4000/ws/${channel}`);
+    if (document.location.protocol === "https:") {
+      scheme += "s";
+    }
 
-    this.socket.addEventListener("close", () => {
-      this.subscribe(channel);
-      this.handlers.forEach(cb => this.listen(cb));
-    });
+    this.handler = handler;
+
+    this.connection = new WebSocket(`${scheme}://localhost:4000/ws/${channel}`);
+
+    this.connection.onopen = this.pollServer.bind(this);
+
+    this.connection.onmessage = this.reciever.bind(this);
+
+    this.connection.onclose = this.clearTimers.bind(this);
 
     return this;
   }
 
-  listen(callback) {
-    this.handlers.push(callback);
-    this.socket.addEventListener("message", callback);
+  reciever(response) {
+    if (response.data === "__pong__") {
+      clearTimeout(this.closeTimeoutID);
+      this.closeTimeoutID = null;
+      return;
+    }
+
+    return this.handler(JSON.parse(response.data));
   }
 
   broadcast(data) {
     const message = JSON.stringify(data);
-    this.socket.send(
+    this.connection.send(
       JSON.stringify({
         data: { message: message }
       })
     );
+
+    // we can suspend pinging the server whilst websocket is alive
+    this.clearTimers();
+
+    if (!this.pollTimeoutID) {
+      this.pollTimeoutID = setTimeout(this.pollServer.bind(this), 5000);
+    }
+  }
+
+  pollServer() {
+    // Begin healthcheck polling
+    this.intervalID = setInterval(this.ping.bind(this), 30000);
+  }
+
+  ping() {
+    this.connection.send("__ping__");
+    // No pong after 5 seconds close the connection
+    this.closeTimeoutID = setTimeout(() => this.connection.close(), 5000);
+  }
+
+  clearTimers() {
+    clearInterval(this.intervalID);
+    this.intervalID = null;
+    clearTimeout(this.pollTimeoutID);
+    this.pollTimeoutID = null;
   }
 }
